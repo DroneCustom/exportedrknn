@@ -57,13 +57,14 @@ def nms_boxes(boxes, scores):
     return np.array(keep)
 
 def post_process(input_data):
-    # Assuming input_data is structured correctly for YOLO model output.
-    # Implement your post-processing logic here based on your model's output format.
-    
-    # Example of dummy processing:
-    boxes, classes, scores = [], [], []  # Replace with actual processing logic.
-    
-    return np.array(boxes), np.array(classes), np.array(scores)
+    boxes, scores, classes_conf = [], [], []
+    defualt_branch=3
+    pair_per_branch = len(input_data)//defualt_branch
+    # Python 忽略 score_sum 输出
+    for i in range(defualt_branch):
+        boxes.append(box_process(input_data[pair_per_branch*i]))
+        classes_conf.append(input_data[pair_per_branch*i+1])
+        scores.append(np.ones_like(input_data[pair_per_branch*i+1][:,:1,:,:], dtype=np.float32))
 
 def draw(image, boxes, scores, classes):
     for box, score, cl in zip(boxes, scores, classes):
